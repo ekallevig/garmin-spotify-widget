@@ -1,0 +1,11 @@
+<drawables>
+    <drawable-list id="header" background="000000">
+        <shape type="rectangle" x="0" y="0" width="fill" height="55" color="FFFFFF"/>
+    </drawable-list>
+    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="DefaultSpotifyLogo" filename="../images/spotify.png" />
+    <bitmap id="DefaultPlayButton" filename="../images/play.png" />
+    <bitmap id="DefaultPauseButton" filename="../images/pause.png" />
+    <bitmap id="DefaultPreviousButton" filename="../images/previous.png" />
+    <bitmap id="DefaultNextButton" filename="../images/next.png" />
+</drawables>

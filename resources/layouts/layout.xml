@@ -1,0 +1,69 @@
+<layouts>
+    <layout id="Summary">
+        <button x="center" y="10" width="100" height="30" behavior="onRefresh">
+            <state id="stateDefault" bitmap="@Drawables.DefaultSpotifyLogo" />
+            <state id="stateHighlighted" bitmap="@Drawables.DefaultSpotifyLogo" />
+            <state id="stateSelected" bitmap="@Drawables.DefaultSpotifyLogo" />
+            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
+        </button>        
+        <label id="error" x="right" y="15" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER" />
+        <label id="track" text="@Strings.trackLabel" x="center" y="50" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_WHITE" />
+        <label id="artist" x="center" y="80" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_BLUE" />
+        <button x="20" y="130" width="111" height="111" background="Graphics.COLOR_WHITE" behavior="onPlay">
+            <state id="stateDefault" bitmap="@Drawables.DefaultPlayButton" />
+            <state id="stateHighlighted" bitmap="@Drawables.DefaultPlayButton" />
+            <state id="stateSelected" bitmap="@Drawables.DefaultPlayButton" />
+            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
+        </button>
+        <button x="151" y="130" width="111" height="111" background="Graphics.COLOR_WHITE" behavior="onPause">
+            <state id="stateDefault" bitmap="@Drawables.DefaultPauseButton" />
+            <state id="stateHighlighted" bitmap="@Drawables.DefaultPauseButton" />
+            <state id="stateSelected" bitmap="@Drawables.DefaultPauseButton" />
+            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
+        </button>
+        <button x="20" y="261" width="111" height="111" background="Graphics.COLOR_WHITE" behavior="onPrevious">
+            <state id="stateDefault" bitmap="@Drawables.DefaultPreviousButton" />
+            <state id="stateHighlighted" bitmap="@Drawables.DefaultPreviousButton" />
+            <state id="stateSelected" bitmap="@Drawables.DefaultPreviousButton" />
+            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
+        </button>
+        <button x="151" y="261" width="111" height="111" background="Graphics.COLOR_WHITE" behavior="onNext">
+            <state id="stateDefault" bitmap="@Drawables.DefaultNextButton" />
+            <state id="stateHighlighted" bitmap="@Drawables.DefaultNextButton" />
+            <state id="stateSelected" bitmap="@Drawables.DefaultNextButton" />
+            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
+        </button>
+    </layout>
+
+
+    <layout id="ErrorLayout">
+        <label id="Message" x="center" y="center" justification="Gfx.TEXT_JUSTIFY_CENTER" color="FFFFFF"/>
+    </layout>
+
+    <layout id="LoginLayout">
+        <bitmap id="gcm" filename="../images/gcm.png" x="center" y="0" dithering="none" >
+            <palette>
+              <color>000000</color>
+                <color>555555</color>
+                <color>AAAAAA</color>
+                <color>00AAFF</color>
+            </palette>
+        </bitmap>
+        <label x="center" y="65" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" text="@Strings.goToPhone" />
+        <label x="center" y="85" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" text="@Strings.connectString3" />
+    </layout>
+
+    <layout id="Gcm">
+        <bitmap id="gcm" filename="../images/gcm.png" x="center" y="0" dithering="none" >
+            <palette>
+              <color>000000</color>
+                <color>555555</color>
+                <color>AAAAAA</color>
+                <color>00AAFF</color>
+            </palette>
+        </bitmap>
+        <label x="center" y="65" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" text="@Strings.connectString1" />
+        <label x="center" y="85" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" text="@Strings.connectString2" />
+        <label x="center" y="105" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" text="@Strings.connectString3" />
+    </layout>
+</layouts>
