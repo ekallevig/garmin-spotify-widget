@@ -71,7 +71,7 @@ class LoginTransaction
         // If we got data back then we were successful. Otherwise
         // pass the error onto the delegate
         if( data != null) {
-            _delegate.handleResponse(data);
+            _delegate.handleResponse(responseCode, data);
         } else {
             Sys.println("Error in handleAccessResponse");
             Sys.println("data = " + data);
@@ -115,11 +115,6 @@ class LoginTransaction
 // This is a TransactionDelegate for handling the login
 class LoginTransactionDelegate extends TransactionDelegate{
 
-    // Constructor
-    // function initialize() {
-    //     TransactionDelegate.initialize();
-    // }
-
     // Handle a error from the server
     function handleError(code) {
         var msg = WatchUi.loadResource( Rez.Strings.error );
@@ -128,14 +123,14 @@ class LoginTransactionDelegate extends TransactionDelegate{
     }
 
     // Handle a successful response from the server
-    function handleResponse(data) {
+    function handleResponse(responseCode, data) {
         // Store the access and refresh tokens in properties
         // For app store apps the properties are encrypted using
         // a randomly generated key
         App.getApp().setProperty("refresh_token", data["refresh_token"]);
         App.getApp().setProperty("access_token", data["access_token"]);
         // Switch to the data view
-        Ui.switchToView(new SpotifyView(), null, Ui.SLIDE_IMMEDIATE);
+        Ui.switchToView(new SpotifyView(), new SpotifyButtonDelegate(), Ui.SLIDE_IMMEDIATE);
     }
 
 }

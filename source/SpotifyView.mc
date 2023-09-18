@@ -58,7 +58,6 @@ class SpotifyView extends Ui.View {
 
     // Update the view
     function onUpdate(dc) {
-        // Get and show the current time
 
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);

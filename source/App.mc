@@ -26,7 +26,10 @@ class SpotifyWidget extends App.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
+        // Needed when developing in sim because sim's oauth browser
+        // doesn't support JS, which spotify's auth page needs.
         // setProperty("refresh_token", $.RefreshToken);
+
         var token = getProperty("refresh_token");
 
         if(!System.getDeviceSettings().phoneConnected) {

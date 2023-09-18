@@ -5,6 +5,7 @@
 //
 using Toybox.Communications;
 using Toybox.System;
+using Toybox.Timer;
 
 class SpotifyPreviousTransaction extends Transaction {
 
@@ -15,4 +16,14 @@ class SpotifyPreviousTransaction extends Transaction {
         _path = "me/player/previous";
     }
 
+    function onResponse(responseCode, data) {
+        Transaction.onResponse(responseCode, data);
+        if(responseCode == 204) {
+
+            // Delay call to currently-playing b/c sometimes it doesn't
+            // update fast enough after the next/prev call.
+            var myTimer = new Timer.Timer();
+            myTimer.start(method(:refreshCurrentlyPlaying), 500, false);
+        }
+    }
 }

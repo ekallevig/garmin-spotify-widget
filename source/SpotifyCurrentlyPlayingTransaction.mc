@@ -8,24 +8,37 @@ using Toybox.System;
 
 class SpotifyCurrentlyPlayingDelegate extends TransactionDelegate {
 
+    var result;
+
     function initialize(view) {
         TransactionDelegate.initialize(view);
+        result = new SpotifyModel();
     }
 
-    function handleResponse(data) {
-        TransactionDelegate.handleResponse(data);
+    function handleResponse(responseCode, data) {
+        TransactionDelegate.handleResponse(responseCode, data);
         // Construct the model class and populate the results
-        var result = new SpotifyModel();
         if (data.hasKey("item")) {
-            result.track = data["item"]["name"];
-            result.artist = data["item"]["artists"][0]["name"];
+            var track = data["item"]["name"];
+            var artist = data["item"]["artists"][0]["name"];
+            System.println("- song: " + track);
+            System.println("- artist: " + artist);
+
+            // Truncate song/artist if too long
+            if (track.length() > 25) {
+                track = track.substring(0, 25) + "...";
+            }
+            result.track = track;
+            if (artist.length() > 25) {
+                artist = artist.substring(0, 25) + "...";
+            }
+            result.artist = artist;
         } else {
-            result.track = "No Track Playing";
-            result.artist = "Select Song in Spotify App";
+            result.track = "No Active Player";
+            result.artist = "Start Song in Spotify App";
         }
         // Pass the results onto the view
-        _view.updateModel(result);
-        // _view = null;
+        relatedView.updateModel(result);
     }
 
 }

@@ -9,5 +9,4 @@ class SpotifyModel
 {
     var track;
     var artist;
-    var isPlaying;
 }
