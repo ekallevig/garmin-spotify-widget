@@ -1,15 +1,13 @@
-# Spotify Widget
+# Garmin Spotify Widget
 
-A widget that queries and controls your Spotify player using the Connect IQ OAUTH system.
+A Garmin [widget](https://developer.garmin.com/connect-iq/connect-iq-basics/app-types/#widgets) that queries and controls your Spotify player using the Connect IQ OAUTH system.
 
 ![image](https://github.com/ekallevig/garmin-spotify-widget/assets/187722/7af0a16f-0925-418b-a574-4a2b23a02f3b)
 
-Supports:
+## Supported Devices
   * Garmin Edge 1030+ (tested on physical device)
   * Garmin Edge 1030
   * Garmin Edge 1040
-
-<a href="https://www.flaticon.com/free-icons/end" title="end icons">End icons created by Those Icons - Flaticon</a>
 
 ## Dev Notes
 
@@ -33,3 +31,7 @@ Supports:
           ```
     * Set refresh token as `RefreshToken` variable in [`Keys.mc`](source/Keys.mc#L14)
     * Uncomment `setProperty("refresh_token", $.RefreshToken);` in [`App.mc`](source/App.mc#L31)
+
+## Credits
+  * <a href="https://www.flaticon.com/free-icons/end" title="end icons">End icons created by Those Icons - Flaticon</a>
+
