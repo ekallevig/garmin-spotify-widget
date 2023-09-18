@@ -2,7 +2,9 @@
 
 A Garmin [widget](https://developer.garmin.com/connect-iq/connect-iq-basics/app-types/#widgets) that queries and controls your Spotify player using the Connect IQ OAUTH system.
 
-![image](https://github.com/ekallevig/garmin-spotify-widget/assets/187722/7af0a16f-0925-418b-a574-4a2b23a02f3b)
+| Edge 1030+ | Edge 1040 |
+| --- | --- |
+| ![image](https://github.com/ekallevig/garmin-spotify-widget/assets/187722/7af0a16f-0925-418b-a574-4a2b23a02f3b) | ![image](https://github.com/ekallevig/garmin-spotify-widget/assets/187722/b55d4afc-2fff-467b-82de-ef7504b36319) |
 
 ## Supported Devices
   * Garmin Edge 1030+ (tested on physical device)
