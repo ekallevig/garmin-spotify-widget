@@ -5,8 +5,12 @@
 //
 
 // POMO class that contains the results
-class SpotifyModel
-{
+class SpotifyPlayerModel {
     var track;
     var artist;
+}
+
+class SpotifyPlaylistsModel {
+    var name;
+    var uri;
 }

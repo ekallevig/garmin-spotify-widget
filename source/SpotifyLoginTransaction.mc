@@ -10,8 +10,7 @@ using Toybox.Application as App;
 
 // The LoginTransaction is a special transaction that handles
 // getting the OAUTH token.
-class LoginTransaction
-{
+class LoginTransaction {
     hidden var _delegate;
     hidden var _complete;
 
@@ -86,7 +85,7 @@ class LoginTransaction
         var params = {
                 "client_id"=>$.ClientId,
                 "response_type"=>"code",
-                "scope"=>"user-modify-playback-state,user-read-playback-state,user-read-currently-playing",
+                "scope"=>"user-modify-playback-state,user-read-playback-state,user-read-currently-playing,playlist-read-private",
                 "redirect_uri"=>$.RedirectUri
         };
         System.println(params.toString());
@@ -95,12 +94,6 @@ class LoginTransaction
             "https://accounts.spotify.com/authorize",
             // POST parameters
             params,
-            // {
-            //     "client_id"=>$.ClientId,
-            //     "response_type"=>"code",
-            //     "scope"=>"public",
-            //     "redirect_uri"=>$.RedirectUri
-            // },
             // Redirect URL
             $.RedirectUri,
             // Response type
@@ -113,7 +106,7 @@ class LoginTransaction
 
 
 // This is a TransactionDelegate for handling the login
-class LoginTransactionDelegate extends TransactionDelegate{
+class LoginTransactionDelegate extends Ui.BehaviorDelegate {
 
     // Handle a error from the server
     function handleError(code) {
@@ -130,7 +123,8 @@ class LoginTransactionDelegate extends TransactionDelegate{
         App.getApp().setProperty("refresh_token", data["refresh_token"]);
         App.getApp().setProperty("access_token", data["access_token"]);
         // Switch to the data view
-        Ui.switchToView(new SpotifyView(), new SpotifyButtonDelegate(), Ui.SLIDE_IMMEDIATE);
+        var view = new SpotifyPlayerView();
+        Ui.switchToView(view, new SpotifyPlayerDelegate(view), Ui.SLIDE_IMMEDIATE);
     }
 
 }

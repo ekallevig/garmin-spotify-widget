@@ -1,83 +1,64 @@
-//
-// Copyright 2015-2016 by Garmin Ltd. or its subsidiaries.
-// Subject to Garmin SDK License Agreement and Wearables
-// Application Developer Agreement.
-//
-//
-// Copyright 2015-2016 by Garmin Ltd. or its subsidiaries.
-// Subject to Garmin SDK License Agreement and Wearables
-// Application Developer Agreement.
-//
 using Toybox.Communications as Comm;
 using Toybox.Application as App;
 using Toybox.System as Sys;
 using Toybox.WatchUi as Ui;
+using Toybox.Timer;
 
-// Base class for the TransactionDelegate
-class TransactionDelegate {
-    var relatedView;
 
-    function initialize(view) {
-        relatedView = view;
-    }
+class SpotifyTransaction {
 
-    // Function to put error handling
-    function handleError(error) {
-        relatedView.findDrawableById("responseCode").setText(error);
-        Ui.requestUpdate();
-    }
-
-    // Function to put response handling
-    function handleResponse(responseCode, data) {
-        relatedView.findDrawableById("responseCode").setText(responseCode.toString());
-        Ui.requestUpdate();
-    }
-
-    // Function to put response handling
-    function handleRequest(data) {
-        relatedView.findDrawableById("status").setText(data);
-        relatedView.findDrawableById("responseCode").setText("...");
-        Ui.requestUpdate();    }
-}
-
-// Base class for transactions to an OAUTH API
-class Transaction
-{
     hidden var _path;
-    hidden var _method = Comm.HTTP_REQUEST_METHOD_GET;
+    hidden var _method;
     hidden var _methodName;
     hidden var _parameters;
-    hidden var _delegate;
+    hidden var _overrideParams;
+    hidden var _notifyRequest;
+    hidden var _notifyResponse;
 
     // Constructor
     // @param delegate TransactionDelegate
-    function initialize(delegate) {
-        _delegate = delegate;
-        switch (_method) {
-            case 1:
-                _methodName = "GET";
+    function initialize(path, parameters, method, notifyRequest, notifyResponse) {
+        _path = path;
+        _methodName = method;
+        _parameters = parameters;
+        _notifyRequest = notifyRequest;
+        _notifyResponse = notifyResponse;
+        switch (method) {
+            case "PUT":
+                _method = Comm.HTTP_REQUEST_METHOD_PUT;
             break;
-            case 2:
-                _methodName = "PUT";
+            case "POST":
+                _method = Comm.HTTP_REQUEST_METHOD_POST;
             break;
-            case 3:
-                _methodName = "POST";
+            default:
+                _method = Comm.HTTP_REQUEST_METHOD_GET;
             break;
         }
+
     }
 
     // Executes the transaction
-    function go() {
-        System.println(_methodName + ": " + _path);
+    function go(params) {
+        _overrideParams = params;
+        var finalParams;
+        if (params == null) {
+            finalParams = _parameters;
+        } else {
+            finalParams = params;
+        }
+        Sys.println(_methodName + ": " + _path + " " + finalParams);
         var accessToken = App.getApp().getProperty("access_token");
         var url = $.ApiUrl + _path;
-        _delegate.handleRequest(_path);
+        _notifyRequest.invoke(_path);
         Comm.makeWebRequest(
             url,
-            _parameters,
+            finalParams,
             {
                 :method=>_method,
-                :headers=>{ "Authorization"=>"Bearer " + accessToken }
+                :headers=>{
+                    "Authorization"=>"Bearer " + accessToken,
+                    "Content-Type"=> Comm.REQUEST_CONTENT_TYPE_JSON
+                }
             },
             method(:onResponse)
         );
@@ -86,17 +67,20 @@ class Transaction
     // Handles response from server
     function onResponse(responseCode, data) {
         if(responseCode == 200) {
+            _overrideParams = null;
             System.println("- 200");
-            _delegate.handleResponse(responseCode, data);
+            _notifyResponse.invoke(responseCode, data);
         } else if(responseCode == 204) {
+            _overrideParams = null;
             System.println("- 204: no content");
-            _delegate.handleResponse(responseCode, {});
+            _notifyResponse.invoke(responseCode, {});
         } else if(responseCode == 401) {
             System.println("- 401: renew token");
             onRenew();
         } else {
+            _overrideParams = null;
             System.println("- " + responseCode + ": " + data);
-            _delegate.handleError(responseCode.toString());
+            _notifyResponse.invoke(responseCode, null);
         }
     }
 
@@ -105,7 +89,7 @@ class Transaction
         var refreshToken = App.getApp().getProperty("refresh_token");
         var url = "https://accounts.spotify.com/api/token";
         System.println("POST: api/token");
-        _delegate.handleRequest("api/token");
+        _notifyRequest.invoke("api/token");
         Comm.makeWebRequest(
             url,
             {
@@ -124,18 +108,14 @@ class Transaction
     function handleRefresh(responseCode, data) {
         if(responseCode == 200) {
             System.println("- 200: got token");
-            _delegate.handleResponse(responseCode, data);
+            _notifyResponse.invoke(responseCode, data);
             App.getApp().setProperty("access_token", data["access_token"]);
         } else {
             Sys.println(responseCode.toString());
-            _delegate.handleResponse("- " + responseCode, data);
+            _notifyResponse.invoke(responseCode, data);
         }
         // Kick off the transaction again
-        go();
-    }
-
-    function refreshCurrentlyPlaying() {
-        _delegate.relatedView._transaction.go();
+        go(_overrideParams);
     }
 
 }

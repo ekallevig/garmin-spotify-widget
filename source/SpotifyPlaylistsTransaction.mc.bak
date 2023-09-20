@@ -1,0 +1,31 @@
+//
+// Copyright 2015-2016 by Garmin Ltd. or its subsidiaries.
+// Subject to Garmin SDK License Agreement and Wearables
+// Application Developer Agreement.
+//
+using Toybox.Communications;
+using Toybox.System;
+
+class SpotifyPlaylistsDelegate extends TransactionDelegate {
+
+    function initialize(view) {
+        TransactionDelegate.initialize(view);
+    }
+
+    function handleResponse(responseCode, data) {
+        TransactionDelegate.handleResponse(responseCode, data);
+        if (data.hasKey("items")) {
+            relatedView.updateModel(data["items"]);
+        }
+    }
+
+}
+
+class SpotifyPlaylistsTransaction extends Transaction {
+
+    function initialize(delegate) {
+        Transaction.initialize(delegate);
+        _path = "me/playlists?limit=7";
+    }
+
+}

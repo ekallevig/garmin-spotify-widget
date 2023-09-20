@@ -15,4 +15,9 @@ class SpotifyPlayTransaction extends Transaction {
         _path = "me/player/play";
     }
 
+    function go(params) {
+        _parameters = params;
+        Transaction.go();
+    }
+
 }

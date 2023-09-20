@@ -1,0 +1,59 @@
+//
+// Copyright 2015-2016 by Garmin Ltd. or its subsidiaries.
+// Subject to Garmin SDK License Agreement and Wearables
+// Application Developer Agreement.
+//
+using Toybox.WatchUi as Ui;
+using Toybox.System as Sys;
+using Toybox.Lang as Lang;
+
+
+class SpotifyPlaylistsView extends Ui.Menu2 {
+
+    var _playlistsTransaction;
+
+    function updateModel(items) {
+        for( var i = 0; i < items.size(); i++ ) {
+            self.addItem(
+                new MenuItem(
+                    items[i]["name"],
+                    null,
+                    items[i]["uri"],
+                    {}
+                )
+            );
+        }
+        Ui.requestUpdate();
+    }
+
+    function onLayout(dc) {
+        self.setTitle("Playlists");
+        self.addItem(
+            new MenuItem(
+                "Discover Weekly",
+                null,
+                "spotify:playlist:37i9dQZEVXcWKNabIiyrN2",
+                {}
+            )
+        );
+    }
+
+    function onShow() {
+        if (_playlistsTransaction == null) {
+            _playlistsTransaction = new SpotifyPlaylistsTransaction( new SpotifyPlaylistsDelegate(self) );
+            _playlistsTransaction.go();
+        }
+    }
+
+}
+
+
+class SpotifyPlaylistsInputDelegate extends Ui.Menu2InputDelegate {
+
+    function onSelect(item) {
+        System.println(item.getLabel());
+        playerView._playTransaction.go({"context_uri"=>item.getId()});
+        Ui.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+
+}

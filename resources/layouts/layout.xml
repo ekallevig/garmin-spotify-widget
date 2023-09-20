@@ -1,6 +1,6 @@
 <layouts>
     <layout id="Summary">
-        <button x="center" y="0" width="fill" height="116" behavior="onRefresh">
+        <button x="center" y="0" width="fill" height="116" behavior="onRefreshButton">
             <state id="stateDefault" color="Graphics.COLOR_TRANSPARENT" />
             <state id="stateHighlighted" color="Graphics.COLOR_TRANSPARENT" />
             <state id="stateSelected" color="Graphics.COLOR_TRANSPARENT" />
@@ -9,25 +9,25 @@
         <bitmap id="DefaultSpotifyLogo" x="center" y="10" filename="../images/spotify.png" />
         <label id="track" text="@Strings.TrackLabel" x="center" y="54" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_WHITE" />
         <label id="artist" x="center" y="84" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_BLUE" />
-        <button x="20" y="130" width="111" height="111" behavior="onPlay">
+        <button id="play" x="20" y="130" width="111" height="111" behavior="onPlayButton">
             <state id="stateDefault" bitmap="@Drawables.DefaultPlayButton" />
             <state id="stateHighlighted" bitmap="@Drawables.HighlightedPlayButton" />
             <state id="stateSelected" bitmap="@Drawables.SelectedPlayButton" />
             <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
         </button>
-        <button x="151" y="130" width="111" height="111" behavior="onPause">
+        <button x="151" y="130" width="111" height="111" behavior="onPauseButton">
             <state id="stateDefault" bitmap="@Drawables.DefaultPauseButton" />
             <state id="stateHighlighted" bitmap="@Drawables.HighlightedPauseButton" />
             <state id="stateSelected" bitmap="@Drawables.DefaultPauseButton" />
             <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
         </button>
-        <button x="20" y="261" width="111" height="111" behavior="onPrevious">
+        <button x="20" y="261" width="111" height="111" behavior="onPreviousButton">
             <state id="stateDefault" bitmap="@Drawables.DefaultPreviousButton" />
             <state id="stateHighlighted" bitmap="@Drawables.HighlightedPreviousButton" />
             <state id="stateSelected" bitmap="@Drawables.DefaultPreviousButton" />
             <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
         </button>
-        <button x="151" y="261" width="111" height="111" behavior="onNext">
+        <button x="151" y="261" width="111" height="111" behavior="onNextButton">
             <state id="stateDefault" bitmap="@Drawables.DefaultNextButton" />
             <state id="stateHighlighted" bitmap="@Drawables.HighlightedNextButton" />
             <state id="stateSelected" bitmap="@Drawables.DefaultNextButton" />
