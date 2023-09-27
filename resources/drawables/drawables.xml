@@ -1,12 +1,23 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="../images/launcher.png" />
-    <bitmap id="DefaultPlayButton" filename="../images/play.png" />
-    <bitmap id="SelectedPlayButton" filename="../images/play-selected.png" />
-    <bitmap id="HighlightedPlayButton" filename="../images/play-highlighted.png" />
-    <bitmap id="DefaultPauseButton" filename="../images/pause.png" />
-    <bitmap id="HighlightedPauseButton" filename="../images/pause-highlighted.png" />
-    <bitmap id="DefaultPreviousButton" filename="../images/previous.png" />
-    <bitmap id="HighlightedPreviousButton" filename="../images/previous-highlighted.png" />
-    <bitmap id="DefaultNextButton" filename="../images/next.png" />
-    <bitmap id="HighlightedNextButton" filename="../images/next-highlighted.png" />
+
+    <bitmap id="PlayDefaultButton" filename="../images/play-default.png" />
+    <bitmap id="PlayHighlightedButton" filename="../images/play-highlighted.png" />
+    <bitmap id="PlayDisabledButton" filename="../images/play-disabled.png" />
+
+    <bitmap id="PauseDefaultButton" filename="../images/pause-default.png" />
+    <bitmap id="PauseHighlightedButton" filename="../images/pause-highlighted.png" />
+    <bitmap id="PauseDisabledButton" filename="../images/pause-disabled.png" />
+
+    <bitmap id="AddDefaultButton" filename="../images/add-default.png" />
+    <bitmap id="AddHighlightedButton" filename="../images/add-highlighted.png" />
+    <bitmap id="AddDisbaledButton" filename="../images/add-disabled.png" />
+
+    <bitmap id="PreviousDefaultButton" filename="../images/previous-default.png" />
+    <bitmap id="PreviousHighlightedButton" filename="../images/previous-highlighted.png" />
+    <bitmap id="PreviousDisabledButton" filename="../images/previous-disabled.png" />
+
+    <bitmap id="NextDefaultButton" filename="../images/next-default.png" />
+    <bitmap id="NextHighlightedButton" filename="../images/next-highlighted.png" />
+    <bitmap id="NextDisabledButton" filename="../images/next-disabled.png" />
 </drawables>

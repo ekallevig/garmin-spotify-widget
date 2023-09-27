@@ -1,5 +1,6 @@
 using Toybox.Communications as Comm;
 using Toybox.Application as App;
+using Toybox.Application.Storage;
 using Toybox.System as Sys;
 using Toybox.WatchUi as Ui;
 using Toybox.Timer;
@@ -47,7 +48,8 @@ class SpotifyTransaction {
             finalParams = params;
         }
         Sys.println(_methodName + ": " + _path + " " + finalParams);
-        var accessToken = App.getApp().getProperty("access_token");
+        
+        var accessToken = Storage.getValue("access_token");
         var url = $.ApiUrl + _path;
         _notifyRequest.invoke(_path);
         Comm.makeWebRequest(
@@ -86,7 +88,7 @@ class SpotifyTransaction {
 
     // Handle renewal of the token
     hidden function onRenew() {
-        var refreshToken = App.getApp().getProperty("refresh_token");
+        var refreshToken = Storage.getValue("refresh_token");
         var url = "https://accounts.spotify.com/api/token";
         System.println("POST: api/token");
         _notifyRequest.invoke("api/token");
@@ -108,8 +110,9 @@ class SpotifyTransaction {
     function handleRefresh(responseCode, data) {
         if(responseCode == 200) {
             System.println("- 200: got token");
+             // TODO: deal with this calling callbacks expecting original call data (not access token response)
             _notifyResponse.invoke(responseCode, data);
-            App.getApp().setProperty("access_token", data["access_token"]);
+            Storage.setValue("access_token", data["access_token"]);
         } else {
             Sys.println(responseCode.toString());
             _notifyResponse.invoke(responseCode, data);

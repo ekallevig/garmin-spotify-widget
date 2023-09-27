@@ -1,0 +1,24 @@
+<resources>
+
+    <properties>
+        <property id="client_id" type="string">c20d7db6520e45f18ffd44294b7b1090</property>
+        <property id="client_secret" type="string">fb278331693f44629072902918f6cd44</property>
+        <property id="client_id_secret_hash" type="string"></property>
+    </properties>
+
+    <strings>
+       <string id="client_id">Spotify client_id</string>
+       <string id="client_secret">Spotify client_secret</string>
+    </strings>
+
+    <settings>
+        <setting propertyKey="@Properties.client_id" title="@Strings.client_id">
+            <settingConfig type="alphaNumeric" />
+        </setting>
+
+        <setting propertyKey="@Properties.client_secret" title="@Strings.client_secret">
+            <settingConfig type="alphaNumeric" />
+        </setting>
+    </settings>
+
+</resources>

@@ -11,4 +11,7 @@ var ClientId = "c20d7db6520e45f18ffd44294b7b1090";
 var TokenAuthHash = "YzIwZDdkYjY1MjBlNDVmMThmZmQ0NDI5NGI3YjEwOTA6ZmIyNzgzMzE2OTNmNDQ2MjkwNzI5MDI5MThmNmNkNDQ=";
 
 // Needed to run in simulator because oauth browser window used doesn't support javascript (which spotify's authorize page needs)
-var RefreshToken = "AQCwhcUXJf_kysEc2-ZeHOMjpan6kQNDfbCogLLKxmmdFMBw59ZgBG0_eCdUAkKdu2O2aCh5GcZuDCVTBYk6_18VWXiDkQhWEn90Z_MRQ2MXTzszgLT0np6dQRh27tf_UWY";
+var RefreshToken = "AQDHqc0Qt7XMHzebShVTlMiqiJEOaXqIAVji4StQEftAWEcqQa3vUHTKb2bF-1T2oj0VxeF8aBPRf9THAKwPwbMcl6EQnxpzM8awWNtBwj1AShGsG4bWkK769r6lq8yHFWg";
+
+var NO_PLAYER_LABEL = "No Active Player";
+var NO_PLAYER_SUB_LABEL = "Start Song in Spotify App";

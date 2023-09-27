@@ -1,6 +1,7 @@
 using Toybox.WatchUi as Ui;
 using Toybox.System as Sys;
 using Toybox.Lang as Lang;
+using Toybox.Graphics;
 
 // Store global reference to View
 var playerView = null;
@@ -8,11 +9,14 @@ var playerView = null;
 // Main view for the application
 class SpotifyPlayerView extends Ui.View {
 
+    hidden var _context = "Spotify";
     hidden var _currentTrack = "Loading player...";
     hidden var _currentArtist = "";
     hidden var _isPlaying = false;
+    hidden var _hasActivePlayer = false;
     hidden var _status = "";
     hidden var _responseCode = "";
+    hidden var _button;
 
     function initialize() {
         View.initialize();
@@ -31,16 +35,30 @@ class SpotifyPlayerView extends Ui.View {
     function onUpdate(dc) {
 
         // Update currently playing info
-        var view = View.findDrawableById("track");
+        var view = View.findDrawableById("context");
+        view.setText(_context);
+        view = View.findDrawableById("track");
         view.setText(_currentTrack);
         view = View.findDrawableById("artist");
         view.setText(_currentArtist);
 
         // Update play/pause buttons
-        // view = View.findDrawableById("play");
-        // view.setVisible(!_isPlaying);
+        var play = setButtonState("playButton");
+        var pause = setButtonState("pauseButton");
+        if (!_isPlaying) {
+            play.show();
+            pause.hide();
+        } else {
+            play.hide();
+            pause.show();
+        }
 
-        // Update status/codes
+        // Update default/disabled states for remaining buttons
+        setButtonState("addButton");
+        setButtonState("nextButton");
+        setButtonState("previousButton");
+
+        // // Update status/codes
         view = View.findDrawableById("status");
         view.setText(_status);
         view = View.findDrawableById("responseCode");
@@ -50,10 +68,38 @@ class SpotifyPlayerView extends Ui.View {
         View.onUpdate(dc);
     }
 
+    function setButtonState(id) {
+        var button = View.findDrawableById(id);
+        if (_hasActivePlayer) {
+            button.setState(:stateDefault);
+        } else {
+            button.setState(:stateDisabled);
+        }
+        return button;
+    }
+
+    // function setButtonState(button) {
+    //     if (_hasActivePlayer) {
+    //         button.setState(:stateDefault);
+    //     } else {
+    //         button.setState(:stateDisabled);
+    //     }
+    // }
+
     function onReceiveCurrentlyPlaying(track, artist, isPlaying) {
-        _currentTrack = track;
-        _currentArtist = artist;
+        if (track != null) {
+            _currentTrack = track;
+        }
+        if (artist != null) {
+            _currentArtist = artist;
+        }
+        _hasActivePlayer = track != NO_PLAYER_LABEL;
         _isPlaying = isPlaying;
+        Ui.requestUpdate();
+    }
+
+    function onReceiveContext(context) {
+        _context = context;
         Ui.requestUpdate();
     }
 
@@ -66,6 +112,31 @@ class SpotifyPlayerView extends Ui.View {
     function onReceiveResponseCode(responseCode) {
         _responseCode = responseCode;
         Ui.requestUpdate();
+    }
+
+}
+
+
+// Main view for the application
+class SpotifyPlayerButton extends Ui.Button {
+
+    var initLocX;
+    var initLocY;
+
+    function initialize(settings) {
+        Ui.Button.initialize(settings);
+        initLocX = settings[:locX];
+        initLocY = settings[:locY];
+    }
+
+    function show() {
+        locX = initLocX;
+        locY = initLocY;
+    }
+
+    function hide() {
+        locX = -width;
+        locY = -height;
     }
 
 }

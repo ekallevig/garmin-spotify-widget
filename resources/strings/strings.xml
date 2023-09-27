@@ -1,4 +1,5 @@
 <strings>
     <string id="AppName">Spotify</string>
     <string id="TrackLabel">Loading Player...</string>
+    <string id="ContextLabel"></string>
 </strings>
