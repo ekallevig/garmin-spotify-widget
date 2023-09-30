@@ -1,15 +1,4 @@
 <layouts>
-    <!-- <layout id="test">
-        <drawable id="sometest" class="SpotifyPlayerButton">
-            <param name="stateDefault">@Drawables.DefaultPlayButton</param>
-        </drawable>
-        <button x="20" y="130" width="111" height="111" behavior="onPlayButton" class="SpotifyPlayerButton">
-            <state id="stateDefault" bitmap="@Drawables.DefaultPlayButton" />
-            <state id="stateHighlighted" bitmap="@Drawables.HighlightedPlayButton" />
-            <state id="stateSelected" bitmap="@Drawables.SelectedPlayButton" />
-            <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
-        </button>
-    </layout> -->
     <layout id="Summary">
         <button x="center" y="0" width="fill" height="116" behavior="onRefreshButton">
             <state id="stateDefault" color="Graphics.COLOR_TRANSPARENT" />
@@ -18,9 +7,9 @@
             <state id="stateDisabled" color="Graphics.COLOR_BLACK" />
         </button>
         <!-- <bitmap id="DefaultSpotifyLogo" x="center" y="10" filename="../images/spotify.png" /> -->
-        <label id="context" text="@Strings.ContextLabel" x="center" y="10" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_LT_GRAY" />
-        <label id="track" text="@Strings.TrackLabel" x="center" y="54" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_WHITE" />
-        <label id="artist" x="center" y="84" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_BLUE" />
+        <label id="context" text="@Strings.ContextLabel" x="center" y="10" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="0xaeaeae" />
+        <label id="track" text="@Strings.TrackLabel" x="center" y="47" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_WHITE" />
+        <label id="artist" x="center" y="84" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER" color="0x41ee7e" />
         <button x="20" y="130" width="111" height="111" behavior="onPlayButton" class="SpotifyPlayerButton" id="playButton">
             <state id="stateDefault" bitmap="@Drawables.PlayDefaultButton" />
             <state id="stateHighlighted" bitmap="@Drawables.PlayHighlightedButton" />
@@ -51,8 +40,14 @@
             <state id="stateSelected" bitmap="@Drawables.NextHighlightedButton" />
             <state id="stateDisabled" bitmap="@Drawables.NextDisabledButton" />
         </button>
-        <label id="status" x="20" y="385" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_LEFT" color="0x1DB954" />
-        <label id="responseCode" x="260" y="385" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_RIGHT" color="0x1DB954" />
+        <label id="status" x="20" y="385" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_LEFT" color="Gfx.COLOR_WHITE" />
+        <label id="responseCode" x="260" y="385" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_RIGHT" color="Gfx.COLOR_WHITE" />
+        <drawable id="progressBackground" visible="false" />
+        <text-area id="progressLabel" x="0" y="bottom" height="8%" width="100%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER" color="Gfx.COLOR_WHITE" visible="false" />
+        <!-- <drawable-list>
+            <shape id="progress-bg" type="rectangle" x="left" y="bottom" height="10%" width="100%" color="0x1DB954" />
+            <text-area id="progress" x="center" y="bottom" height="20%" width="100%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_LEFT" color="Gfx.COLOR_BLACK" text="Fetching Playlists: 10/50" />
+        </drawable-list> -->
     </layout>
 
 

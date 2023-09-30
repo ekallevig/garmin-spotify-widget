@@ -15,3 +15,5 @@ var RefreshToken = "AQDHqc0Qt7XMHzebShVTlMiqiJEOaXqIAVji4StQEftAWEcqQa3vUHTKb2bF
 
 var NO_PLAYER_LABEL = "No Active Player";
 var NO_PLAYER_SUB_LABEL = "Start Song in Spotify App";
+var DEFAULT_CONTEXT_LABEL = "Spotify";
+var LOADING_LABEL = "Loading player...";

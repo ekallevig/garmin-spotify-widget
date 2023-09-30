@@ -9,14 +9,14 @@ class SpotifyPlaylistsMenu extends Ui.Menu2 {
 
     public function initialize(playlists) {
         Menu2.initialize({:title=>"Playlists"});
-        // self.addItem(
-        //     new MenuItem(
-        //         "Discover Weekly",
-        //         null,
-        //         "spotify:playlist:37i9dQZEVXcWKNabIiyrN2",
-        //         {}
-        //     )
-        // );
+        self.addItem(
+            new MenuItem(
+                "Clear Cache",
+                null,
+                "clear_cache",
+                {}
+            )
+        );
         for( var i = 0; i < playlists.size(); i++ ) {
             // Sys.println("adding menu item: " + items[i]["name"]);
             self.addItem(

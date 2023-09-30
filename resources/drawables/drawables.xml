@@ -20,4 +20,9 @@
     <bitmap id="NextDefaultButton" filename="../images/next-default.png" />
     <bitmap id="NextHighlightedButton" filename="../images/next-highlighted.png" />
     <bitmap id="NextDisabledButton" filename="../images/next-disabled.png" />
+
+    <drawable-list id="progressBackground">
+        <shape type="rectangle" x="left" y="bottom" height="10%" width="100%" color="Gfx.COLOR_BLACK" />
+    </drawable-list>
+    <!-- <shape id="ProgressBg" type="rectangle" x="left" y="bottom" height="10%" width="100%" color="0x1DB954" /> -->
 </drawables>

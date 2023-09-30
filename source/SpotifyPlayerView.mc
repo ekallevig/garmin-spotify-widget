@@ -9,8 +9,9 @@ var playerView = null;
 // Main view for the application
 class SpotifyPlayerView extends Ui.View {
 
-    hidden var _context = "Spotify";
-    hidden var _currentTrack = "Loading player...";
+    hidden var _context = $.DEFAULT_CONTEXT_LABEL;
+    hidden var _progress = null;
+    hidden var _currentTrack = $.LOADING_LABEL;
     hidden var _currentArtist = "";
     hidden var _isPlaying = false;
     hidden var _hasActivePlayer = false;
@@ -58,7 +59,17 @@ class SpotifyPlayerView extends Ui.View {
         setButtonState("nextButton");
         setButtonState("previousButton");
 
-        // // Update status/codes
+        // // Update status/codes/progress
+        view = View.findDrawableById("progressLabel");
+        var progressBg = View.findDrawableById("progressBackground");
+        if (_progress == null) {
+            view.setVisible(false);
+            progressBg.setVisible(false);
+        } else {
+            view.setText(_progress);
+            view.setVisible(true);
+            progressBg.setVisible(true);
+        }
         view = View.findDrawableById("status");
         view.setText(_status);
         view = View.findDrawableById("responseCode");
@@ -78,14 +89,6 @@ class SpotifyPlayerView extends Ui.View {
         return button;
     }
 
-    // function setButtonState(button) {
-    //     if (_hasActivePlayer) {
-    //         button.setState(:stateDefault);
-    //     } else {
-    //         button.setState(:stateDisabled);
-    //     }
-    // }
-
     function onReceiveCurrentlyPlaying(track, artist, isPlaying) {
         if (track != null) {
             _currentTrack = track;
@@ -100,6 +103,11 @@ class SpotifyPlayerView extends Ui.View {
 
     function onReceiveContext(context) {
         _context = context;
+        Ui.requestUpdate();
+    }
+
+    function onReceiveProgress(progress) {
+        _progress = progress;
         Ui.requestUpdate();
     }
 

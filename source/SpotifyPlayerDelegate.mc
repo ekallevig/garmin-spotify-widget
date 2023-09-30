@@ -12,26 +12,33 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
     hidden var _isPlaying = false;
     hidden var _menuView;
     hidden var _playlistsBatch = new [0];
+    hidden var _contextCache;
+    hidden var _busy;
     // hidden var _saveTransaction; // TODO: add save button
     // hidden var _shuffleTransaction; // TODO: add shuffle button
+    // hidden var _radioTransaction; // TODO: add radio button
 
     function initialize(view) {
         BehaviorDelegate.initialize();
         _view = view;
+        var _initialContextCache = Storage.getValue("context_cache");
+        if (_initialContextCache == null) {
+            _contextCache = {};
+        } else {
+            _contextCache = _initialContextCache;
+        }
         _currentlyPlayingTransaction = new SpotifyTransaction(
             "me/player",
             {
-                "market" => "US"
+                "market" => "US",
+                "additional_types" => "track,episode"
             },
             "GET",
             method(:onReceiveRequest),
             method(:onReceiveCurrentlyPlayingResponse)
         );
         _currentlyPlayingTransaction.go(null);
-        // _playTransaction = new SpotifyPlayTransaction(method(:onReceiveCurrentlyPlaying));
-        // _pauseTransaction = new SpotifyPauseTransaction( new TransactionDelegate(self) );
-        // _previousTransaction = new SpotifyPreviousTransaction( new TransactionDelegate(self) );
-        // _nextTransaction = new SpotifyNextTransaction( new TransactionDelegate(self) );
+        _busy = true;
     }
 
     function onReceiveRequest(path) {
@@ -42,17 +49,21 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
         _view.onReceiveResponseCode(responseCode.toString());
     }
 
-    function onSelectable(event) {
+    // function onSelectable(event) {
 
-        // Needed when developing in sim because sim has bug preventing
-        // buttons from resetting to default state on touch screens.
-        event.getInstance().setState(:stateDefault);
-    }
+    //     // Needed when developing in sim because sim has bug preventing
+    //     // buttons from resetting to default state on touch screens.
+    //     // event.getInstance().setState(:stateHighlighted);
+    // }
 
     function onMenu() {
+        if (_busy) {
+            return;
+        }
         var storedPlaylists = Storage.getValue("playlists");
         if (storedPlaylists == null) {
             System.println("onmenu, storedPlaylists == null");
+            _view.onReceiveProgress("Downloading playlists...");
             getPlaylists(null, null);
         } else {
             System.println("onmenu, storedPlaylists has contnet");
@@ -63,20 +74,31 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
     }
 
     function onMenuItem(item) {
-        var txn = new SpotifyTransaction(
-            "me/player/play",
-            {
-                "context_uri"=>item.getId()
-            },
-            "PUT",
-            method(:onReceiveRequest),
-            method(:onReceiveRefreshNeededResponse)
-        );
-        txn.go(null);
+        var id = item.getId();
+        if (id.equals("clear_cache")) {
+            System.println("clear cache");
+            Storage.setValue("context_cache", {});
+            _contextCache = {};
+            Storage.deleteValue("playlists");
+            _playlistsBatch = new [0];
+        } else {
+            var txn = new SpotifyTransaction(
+                "me/player/play",
+                {
+                    "context_uri" => "spotify:playlist:" + id
+                },
+                "PUT",
+                method(:onReceiveRequest),
+                method(:onReceiveRefreshNeededResponse)
+            );
+            txn.go(null);
+        }
     }
 
     function getPlaylists(limit, offset) {
         System.println("limit offset " + limit + " " + offset);
+        _busy = true;
+        // limit = limit == null ? 5 : limit;
         var txn = new SpotifyTransaction(
             "me/playlists",
             {
@@ -96,16 +118,21 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
             System.println("onReceivePlaylistsResponse data == null");
         } else if (data.hasKey("items") && data["items"].size() > 0) {
             System.println("onReceivePlaylistsResponse data[items].size() > 0");
+            var maxPlaylists = data["total"] < 50 ? data["total"] : 50;
+            _view.onReceiveProgress("Downloading playlists: " + (data["items"].size()+data["offset"]) + "/" + maxPlaylists);
             var items = data["items"];
             for( var i = 0; i < items.size(); i++ ) {
+                var uriParts = parseUri(items[i]["uri"]);
                 _playlistsBatch.add({
                     "n" => items[i]["name"],
-                    "u" => items[i]["uri"]
+                    "u" => uriParts["id"]
                 });
             }
-            if (_playlistsBatch.size() > 50) {
+            if (_playlistsBatch.size() >= maxPlaylists) {
                 System.println("onReceivePlaylistsResponse _playlistsBatch > 50, set storage, onmenu");
                 Storage.setValue("playlists", _playlistsBatch);
+                _view.onReceiveProgress(null);
+                _busy = false;
                 onMenu();
             } else {
                 System.println("onReceivePlaylistsResponse _playlistsBatch < 50, get more");
@@ -114,88 +141,151 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
         } else {
             System.println("onReceivePlaylistsResponse data != null but no data[items], set storage, onmenu");
             Storage.setValue("playlists", _playlistsBatch);
+            _view.onReceiveProgress(null);
+            _busy = false;
             onMenu();
         }
     }
 
     function onRefreshButton() {
         // System.println("onRefreshButton");
+        if (_busy) {
+            return;
+        }
         _currentlyPlayingTransaction.go(null);
         return false;
     }
 
-    function startRefreshTimer() {
-        if (_isPlaying) {            
-            System.println("startRefreshTimer");
-            _currentRefreshTimer.start(method(:refreshCurrentlyPlaying), 10000, true);
-        }
+    function startRefreshTimer(interval) {
+        System.println("startRefreshTimer " + interval + "ms interval");
+        _currentRefreshTimer.stop();
+        _currentRefreshTimer.start(method(:refreshCurrentlyPlaying), interval, true);
     }
 
     function stopRefreshTimer() {
-            System.println("stopRefreshTimer");
+        System.println("stopRefreshTimer");
         _currentRefreshTimer.stop();
     }
 
     function onReceiveCurrentlyPlayingResponse(responseCode, data) {
+        _busy = false;
         _view.onReceiveResponseCode(responseCode.toString());
-        if (data != null && data.hasKey("item")) {
-            _currentTrack = data["item"];
+        if (data != null && data.hasKey("item") && data["item"] != null) {
+
+            // Refresh timer
             _isPlaying = data["is_playing"];
             if (_isPlaying) {
-                startRefreshTimer();
+                startRefreshTimer(10000);
             } else {
-                stopRefreshTimer();
+                startRefreshTimer(20000);
             }
+
+            // If track hasn't changed since last check, return
+            if (_currentTrack != null) {
+                if (_currentTrack["id"].equals(data["item"]["id"])) {
+                    return;
+                }
+            }
+            _currentTrack = data["item"];
+
+            var isTrack = data["currently_playing_type"].equals("track");
+            var context = !isTrack ? data["item"]["show"]["name"] : data["item"]["album"]["name"];
+            
+            // Track & artist data
             var track = data["item"]["name"];
-            var artist = data["item"]["artists"][0]["name"];
+            var artist = isTrack ? data["item"]["artists"][0]["name"] : data["item"]["show"]["publisher"];
             System.println("- song: " + track);
             System.println("- artist: " + artist);
 
-            // Truncate song/artist if too long
-            if (track.length() > 25) {
-                track = track.substring(0, 25) + "...";
-            }
-            if (artist.length() > 25) {
-                artist = artist.substring(0, 25) + "...";
-            }
+            // Truncate song/artist/context if too long
+            track = truncate(track, 25);
+            artist = truncate(artist, 25);
+            context = truncate(context, 25);
             _view.onReceiveCurrentlyPlaying(track, artist, data["is_playing"]);
 
             // Get context info
-            getContextInfo(data["context"]["uri"]);
+            if (isTrack && data["context"] != null) {
+                var uri = data["context"]["uri"];
+                var uriParts = parseUri(uri);
+                if (_contextCache.hasKey(uriParts["id"])) {
+
+                    // Get from cache
+                    _view.onReceiveContext(truncate(_contextCache[uriParts["id"]], 25));
+                } else {
+
+                    // Fetch from API
+                    _view.onReceiveContext("...");
+                    getContextInfo(uri);
+                }
+            } else {
+                _view.onReceiveContext(context);
+            }
         } else {
             _currentTrack = null;
             _isPlaying = false;
-            stopRefreshTimer();
+            startRefreshTimer(20000);
             _view.onReceiveCurrentlyPlaying($.NO_PLAYER_LABEL, $.NO_PLAYER_SUB_LABEL, false);
+            _view.onReceiveContext($.DEFAULT_CONTEXT_LABEL);
         }
 
     }
 
-    function getContextInfo(uri) {
-        var id;
-        var path;
-        var isPlaylist = uri.find("playlist:");
-        if (isPlaylist != null) {
-            id = uri.substring(isPlaylist+9, uri.length());
-            path = "playlists/" + id;
+    function truncate(val, length) {
+        if (val.length() > length) {
+            val = val.substring(0, length) + "...";
         }
-        var txn = new SpotifyTransaction(
-            path,
-            {
-                "market" => "US",
-                "fields" => "name"
-            },
-            "GET",
-            method(:onReceiveRequest),
-            method(:onReceiveContextResponse)
-        );
-        txn.go(null);
+        return val;
+    }
+
+    function parseUri(uri) {
+        if (uri.find("playlist:") != null) { // e.g. "spotify:playlist:23we0fs0df9as0df"
+            return {"type"=>"playlist", "id"=>uri.substring(8+9, uri.length())};
+        } else if (uri.find("artist:") != null) { // e.g. "spotify:artist:23we0fs0df9as0df"
+            return {"type"=>"artist", "id"=>uri.substring(8+7, uri.length())};
+        } else if (uri.find("album:") != null) { // e.g. "spotify:album:23we0fs0df9as0df"
+            return {"type"=>"album", "id"=>uri.substring(8+6, uri.length())};
+        } else if (uri.find("show:") != null) { // e.g. "spotify:show:23we0fs0df9as0df"
+            return {"type"=>"show", "id"=>uri.substring(8+5, uri.length())};
+        } else if (uri.find("spotify:user:") != null) { // e.g. "spotify:user:erik.kallevig:collection" (for liked songs)
+            return {"type"=>"user", "id"=>uri.substring(8+5, uri.length()-11)};
+        }
+        return null;
+    }
+
+    function getContextInfo(uri) {
+        var uriParts = parseUri(uri);
+        if (uriParts != null && !uriParts["type"].equals("user")) {
+            var txn = new SpotifyTransaction(
+                uriParts["type"] + "s/" + uriParts["id"],
+                {
+                    "market" => "US",
+                    "fields" => "name,id"
+                },
+                "GET",
+                method(:onReceiveRequest),
+                method(:onReceiveContextResponse)
+            );
+            txn.go(null);
+        } else if (uriParts["type"].equals("user")) {
+
+            // Pretty sure this context type (user "collection") is only 
+            // available for current user's special "Liked Songs" faux-playlist
+            onReceiveContextResponse("200", {"name"=>"Liked Songs"});
+        } else {
+            onReceiveContextResponse("200", null);
+        }
     }
 
     function onReceiveContextResponse(responseCode, data) {
         _view.onReceiveResponseCode(responseCode.toString());
         if (data != null && data.hasKey("name")) {
-            _view.onReceiveContext(data["name"]);
+            if (!_contextCache.hasKey(data["id"])) {
+                _contextCache[data["id"]] = data["name"];
+                Storage.setValue("context_cache", _contextCache);
+            }
+            _view.onReceiveContext(truncate(data["name"], 25));
+        } else {
+            _view.onReceiveContext($.DEFAULT_CONTEXT_LABEL);
         }
     }
 
@@ -253,7 +343,7 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
             method(:onReceiveRefreshNeededResponse)
         );
         txn.go(null);
-        return false;
+        return true;
     }
 
     function onNextButton() {
@@ -267,7 +357,7 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
             method(:onReceiveRefreshNeededResponse)
         );
         txn.go(null);
-        return false;
+        return true;
     }
 
     function onReceiveRefreshNeededResponse(responseCode, data) {
@@ -276,7 +366,10 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
     }
 
     function refreshCurrentlyPlaying() {
-       _currentlyPlayingTransaction.go(null);
+        if (_busy) {
+            return;
+        }
+        _currentlyPlayingTransaction.go(null);
     }
 
     function delayedRefreshCurrentlyPlaying() {
