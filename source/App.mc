@@ -42,12 +42,7 @@ class SpotifyWidget extends App.AppBase {
     function setup(init) {
         // Needed when developing in sim because sim's oauth browser
         // doesn't support JS, which spotify's auth page needs.
-        // Storage.clearValues();
         // Storage.setValue("refresh_token", $.RefreshToken);
-        var clientId = Properties.getValue("client_id");
-        var clientSecret = Properties.getValue("client_secret");
-        var clientIdSecretHash = StringUtil.encodeBase64(clientId + ":" + clientSecret);
-        Properties.setValue("client_id_secret_hash", clientIdSecretHash);
         var token = Storage.getValue("refresh_token");
 
         if(!System.getDeviceSettings().phoneConnected) {

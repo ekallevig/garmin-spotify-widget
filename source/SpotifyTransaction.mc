@@ -96,11 +96,11 @@ class SpotifyTransaction {
             url,
             {
                 "grant_type"=>"refresh_token",
-                "refresh_token"=>refreshToken
+                "refresh_token"=>refreshToken,
+                "client_id"=>$.ClientId
             },
             {
-                :method => Comm.HTTP_REQUEST_METHOD_POST,
-                :headers=>{ "Authorization"=>"Basic " + $.TokenAuthHash }
+                :method => Comm.HTTP_REQUEST_METHOD_POST
             },
             method(:handleRefresh)
         );

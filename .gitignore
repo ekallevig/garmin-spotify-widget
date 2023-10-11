@@ -2,5 +2,4 @@ build/*
 bin/*
 developer_key
 Keys.mc.local
-LocalKeys.mc
-source/Keys.mc
+source/LocalKeys.mc

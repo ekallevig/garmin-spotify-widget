@@ -53,7 +53,7 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
 
     //     // Needed when developing in sim because sim has bug preventing
     //     // buttons from resetting to default state on touch screens.
-    //     // event.getInstance().setState(:stateHighlighted);
+    //     event.getInstance().setState(:stateHighlighted);
     // }
 
     function onMenu() {
@@ -80,6 +80,8 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
             Storage.setValue("context_cache", {});
             _contextCache = {};
             Storage.deleteValue("playlists");
+            Storage.deleteValue("access_token");
+            Storage.deleteValue("refresh_token");
             _playlistsBatch = new [0];
         } else {
             var txn = new SpotifyTransaction(
@@ -270,7 +272,7 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
 
             // Pretty sure this context type (user "collection") is only 
             // available for current user's special "Liked Songs" faux-playlist
-            onReceiveContextResponse("200", {"name"=>"Liked Songs"});
+            onReceiveContextResponse("200", {"name"=>"Liked Songs", "id"=>uriParts["id"]});
         } else {
             onReceiveContextResponse("200", null);
         }
