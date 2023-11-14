@@ -50,6 +50,7 @@ class SpotifyTransaction {
         Sys.println(_methodName + ": " + _path + " " + finalParams);
         
         var accessToken = Storage.getValue("access_token");
+        Sys.println("at: " + accessToken);
         var url = $.ApiUrl + _path;
         _notifyRequest.invoke(_path);
         Comm.makeWebRequest(
@@ -89,16 +90,19 @@ class SpotifyTransaction {
     // Handle renewal of the token
     hidden function onRenew() {
         var refreshToken = Storage.getValue("refresh_token");
+        Sys.println("rt: " + refreshToken);
         var url = "https://accounts.spotify.com/api/token";
+        var params = {
+            "grant_type"=>"refresh_token",
+            "refresh_token"=>refreshToken,
+            "client_id"=>$.ClientId
+        };
         System.println("POST: api/token");
+        System.println(params);
         _notifyRequest.invoke("api/token");
         Comm.makeWebRequest(
             url,
-            {
-                "grant_type"=>"refresh_token",
-                "refresh_token"=>refreshToken,
-                "client_id"=>$.ClientId
-            },
+            params,
             {
                 :method => Comm.HTTP_REQUEST_METHOD_POST
             },
@@ -113,8 +117,14 @@ class SpotifyTransaction {
              // TODO: deal with this calling callbacks expecting original call data (not access token response)
             _notifyResponse.invoke(responseCode, data);
             Storage.setValue("access_token", data["access_token"]);
+            Storage.setValue("refresh_token", data["refresh_token"]);
+        } else if (responseCode == 400) {
+            Sys.println("- " + responseCode.toString() + " (deleting tokens)");
+            _notifyResponse.invoke(responseCode, data);
+            Storage.deleteValue("access_token");
+            Storage.deleteValue("refresh_token");
         } else {
-            Sys.println(responseCode.toString());
+            Sys.println("- " + responseCode.toString());
             _notifyResponse.invoke(responseCode, data);
         }
         // Kick off the transaction again

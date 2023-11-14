@@ -118,6 +118,7 @@ class SpotifyPlayerDelegate extends Ui.BehaviorDelegate {
         _view.onReceiveResponseCode(responseCode.toString());
         if (data == null) {
             System.println("onReceivePlaylistsResponse data == null");
+            _busy = false;
         } else if (data.hasKey("items") && data["items"].size() > 0) {
             System.println("onReceivePlaylistsResponse data[items].size() > 0");
             var maxPlaylists = data["total"] < 50 ? data["total"] : 50;
